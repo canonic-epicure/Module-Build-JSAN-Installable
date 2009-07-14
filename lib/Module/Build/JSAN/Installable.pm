@@ -17,29 +17,16 @@ use JSON;
 
 
 #XXX for debugging
-use Data::Dump;
+#use Data::Dump;
 
 
-#the only way to install, $self->add_property dont work
 __PACKAGE__->add_property('task_name' => 'core');
 __PACKAGE__->add_property('static_dir' => 'static');
 
 
 #================================================================================================================================================================================================================================================
 sub new {
-    my $pkg = shift;
-    my %p = @_;
-    $p{metafile} ||= 'META.json';
-    if (my $keywords = delete $p{keywords} || delete $p{tags}) {
-        if ($p{meta_merge}) {
-            $p{meta_merge}->{keywords} = $keywords
-        } else {
-            $p{meta_merge} = { keywords => $keywords };
-        }
-    }
-    
-    my $self = $pkg->SUPER::new(%p);
-    
+    my $self = shift->SUPER::new(@_);
 
     $self->add_build_element('js');
     
@@ -55,12 +42,7 @@ sub new {
 
 #================================================================================================================================================================================================================================================
 sub get_jsan_libroot {
-	
-	if($^O eq 'MSWin32') {
-		return $ENV{JSANLIB} || 'c:\JSAN';
-	} else {
-		return $ENV{JSANLIB} || (split /\s+/, $Config{'libspath'})[1] . '/jsan';
-	}
+	return $ENV{JSANLIB} || ($^O eq 'MSWin32') ? 'c:\JSAN' : (split /\s+/, $Config{'libspath'})[1] . '/jsan';
 }
 
 
@@ -250,15 +232,61 @@ In F<Build.PL>:
 
   $build->create_build_script;
 
-To build a distribution:
+
+To build, test and install a distribution:
 
   % perl Build.PL
-  % ./Build dist
-
-To install a distribution:
-
-  % perl Build.PL
+  % ./Build
+  % ./Build test  
   % ./Build install
+
+
+In F<Components.js>:
+
+  COMPONENTS = {
+      
+      "kernel" : [
+          "JooseX.Namespace.Depended.Manager",
+          "JooseX.Namespace.Depended.Resource",
+          
+          "JooseX.Namespace.Depended.Materialize.Code"
+      ],
+      
+      
+      "web" : [
+          "+kernel",
+      
+          "JooseX.Namespace.Depended.Transport.AjaxAsync",
+          "JooseX.Namespace.Depended.Transport.AjaxSync",
+          "JooseX.Namespace.Depended.Transport.ScriptTag",
+          
+          "JooseX.Namespace.Depended.Resource.URL",
+          "JooseX.Namespace.Depended.Resource.URL.JS",
+          "JooseX.Namespace.Depended.Resource.JS",
+          "JooseX.Namespace.Depended.Resource.JS.External",
+          
+          //should be the last        
+          "JooseX.Namespace.Depended"
+      ],
+  	
+      
+      "core" : [
+          "+web"
+      ],
+      
+      
+      "serverjs" : [
+          "+kernel",
+          
+          "JooseX.Namespace.Depended.Transport.Require",
+          "JooseX.Namespace.Depended.Resource.Require",
+          
+          //should be the last
+          "JooseX.Namespace.Depended"
+      ]
+  	
+  } 
+	
 
 
 =head1 VERSION
@@ -274,31 +302,74 @@ This is a developer aid for creating JSAN distributions. JSAN is the
 "JavaScript Archive Network," a JavaScript library akin to CPAN. Visit
 L<http://www.openjsan.org/> for details.
 
-Use with caution! This module is considered experimental, its features may be changed without notice.
-
 This module works nearly identically to L<Module::Build::JSAN>, so please refer to
 its documentation for additional details.
 
 
 =head1 DIFFERENCES
 
-=over 1
+=over 4
 
-=item 1. ./Build install
+=item 1 ./Build install
 
 This action will install current distribution in your local JSAN library.
 The path to the library is resolved in the following order:
---install_base command-line argument
-environment variable JSAN_LIB
-either the first directory in $Config{libspath}, followed with '/jsan' (on linux systems)
-or 'C:\JSAN' (on Windows)
+
+
+- B<--install_base> command-line argument
+
+- environment variable B<JSAN_LIB>
+
+- Either the first directory in B<$Config{libspath}>, followed with '/jsan' (probably '/usr/local/lib' on linux systems)
+or B<'C:\JSAN'> (on Windows)
+
 
 As a convention, it is recommended, that you configure your local web-server
-that way, that http://localhost/jsan will point at the /lib subdirectory of your local
+that way, that B</jsan> will point at the B</lib> subdirectory of your local
 JSAN library. This way you can access any module from it, with URLs like:
-"/jsan/Test/Run.js"  
+B<'/jsan/Test/Run.js'>  
+
+
+=item 1 ./Build task [--task_name=foo]
+
+This action will build a specific concatenated version (task) of current distribution.
+Default task name is B<'core'>, task name can be specified with B<--task_name> command line option.
+
+Information about tasks is stored in the B<Components.JS> file in the root of distribution.
+See the Synposys for example of B<Components.JS>. 
+
+After concatenation, resulting file is placed on the following path: B</lib/Task/Distribution/Name/sample_task.js>, 
+considering the name of your distribution was B<Distribution::Name> and the task name was B<sample_task>
+
+
+=item 1 ./Build test
+
+This action relies on not yet release JSAN::Prove module, stay tuned for further updates.
 
 =back
+
+
+=head1 Static files handling
+
+Under static files we'll assume any files other than javascript (*.js). Typically those are *.css files and images (*.jpg, *.gif, *.png etc).
+
+All static files should be placed in the 'static directory'. Default name for static directory is B<'/static'>. 
+Alternative name can be specified with B<static_dir> configuration parameter (see Synopsis). Static directory can be organized in any way you prefere.
+
+Lets assume you have the following distribution structure:
+
+  /lib/Distribution/Name.js
+  /static/css/style1.css 
+  /static/img/image1.png
+
+After building (B<./Build>) it will be processed as:
+
+  /blib/lib/Distribution/Name.js
+  /blib/lib/Distribution/Name/static/css/style1.css 
+  /blib/lib/Distribution/Name/static/img/image1.png
+
+During installation (B<./Build install>) the whole 'blib' tree along with static files will be installed in your local library.
+
 
 =head1 AUTHOR
 
@@ -311,6 +382,29 @@ the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Module-Bui
 automatically be notified of progress on your bug as I make changes.
 
 
+=head1 SEE ALSO
+
+=over
+
+=item Examples of installable JSAN distributions 
+
+L<http://github.com/SamuraiJack/JooseX-Namespace-Depended/tree>
+
+L<http://github.com/SamuraiJack/joosex-bridge-ext/tree>
+
+=item L<http://www.openjsan.org/>
+
+Home of the JavaScript Archive Network.
+
+=item L<http://code.google.com/p/joose-js/>
+
+Joose - Moose for JavaScript
+
+=item L<http://github.com/SamuraiJack/test.run/tree>
+
+Yet another testing platform for JavaScript
+
+=back
 
 =head1 SUPPORT
 
