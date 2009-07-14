@@ -12,6 +12,12 @@ my $builder = Module::Build->new(
     },
     add_to_cleanup      => [ 'Module-Build-JSAN-Installable-*' ],
     create_makefile_pl => 'traditional',
+    
+    requires           => {
+		'Module::Build::JSAN' => '0.05',
+		'Path::Class' => '0.16',
+    }
+    
 );
 
 $builder->create_build_script();

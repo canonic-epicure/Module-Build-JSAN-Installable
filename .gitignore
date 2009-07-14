@@ -1,0 +1,17 @@
+blib
+Makefile
+Makefile.old
+Build
+_build
+*.tar.gz
+.lwpcookies
+Module-Build-JSAN-Installable-*
+cover_db
+.project
+.externalToolBuilders
+.includepath
+MANIFEST.bak
+pm_to_blib
+META.yml
+Makefile
+*.tmp
