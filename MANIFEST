@@ -4,5 +4,5 @@ MANIFEST
 README
 lib/Module/Build/JSAN/Installable.pm
 t/00-load.t
-t/pod-coverage.t
-t/pod.t
+Makefile.PL
+META.yml
