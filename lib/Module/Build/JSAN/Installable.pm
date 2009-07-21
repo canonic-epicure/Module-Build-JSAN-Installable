@@ -408,9 +408,9 @@ Yet another testing platform for JavaScript
 
 =head1 SUPPORT
 
-You can find documentation for this module with the perldoc command.
+This module is stored in an open repository at the following address:
 
-    perldoc Module::Build::JSAN::Installable
+L<http://github.com/SamuraiJack/Module-Build-JSAN-Installable/tree/>
 
 
 You can also look for information at:

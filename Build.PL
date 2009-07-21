@@ -11,11 +11,12 @@ my $builder = Module::Build->new(
         'Test::More' => 0,
     },
     add_to_cleanup      => [ 'Module-Build-JSAN-Installable-*' ],
-    create_makefile_pl => 'traditional',
+    create_makefile_pl => 'passthrough',
     
     requires           => {
 		'Module::Build::JSAN' => '0.05',
 		'Path::Class' => '0.16',
+		'JSON' => '2.00',
     }
     
 );

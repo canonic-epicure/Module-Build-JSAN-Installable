@@ -1,5 +1,6 @@
 blib
 Makefile
+Makefile.PL
 Makefile.old
 Build
 _build
