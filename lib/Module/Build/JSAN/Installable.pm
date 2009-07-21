@@ -3,7 +3,7 @@ package Module::Build::JSAN::Installable;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 use Module::Build::JSAN;
 @ISA = qw(Module::Build::JSAN);
@@ -201,7 +201,7 @@ sub ACTION_test {
 }
 
 
-1; # End of Module::Build::JSAN::Installable
+__PACKAGE__ # nothingmuch (c) 
 
 __END__
 
@@ -344,7 +344,7 @@ considering the name of your distribution was B<Distribution::Name> and the task
 
 =item 3 ./Build test
 
-This action relies on not yet release JSAN::Prove module, stay tuned for further updates.
+This action relies on not yet released JSAN::Prove module, stay tuned for further updates.
 
 =back
 
