@@ -3,7 +3,7 @@ package Module::Build::JSAN::Installable;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 use Module::Build::JSAN;
 @ISA = qw(Module::Build::JSAN);
@@ -22,6 +22,7 @@ use JSON;
 
 __PACKAGE__->add_property('task_name' => 'core');
 __PACKAGE__->add_property('static_dir' => 'static');
+__PACKAGE__->add_property('docs_markup' => 'pod');
 
 
 #================================================================================================================================================================================================================================================
@@ -199,6 +200,220 @@ sub ACTION_test {
 		print "There were failures\n";
 	}
 }
+
+
+#================================================================================================================================================================================================================================================
+sub ACTION_doc {
+    my $self = shift;
+    
+    my $markup = $self->docs_markup;
+    
+    if ($markup eq 'pod') {
+        $self->generate_from_pod()
+    } elsif ($markup eq 'md') {
+        $self->generate_from_md()
+    } elsif ($markup eq 'mmd') {
+        $self->generate_from_mmd()
+    }
+}
+
+
+#================================================================================================================================================================================================================================================
+sub generate_from_md {
+    my $self = shift;
+    
+    require Text::Markdown;
+    
+    $self->process_dist_packages({
+        html => \sub {
+            my ($comments, $content) = @_;
+            return (Text::Markdown::markdown($comments), 'html')
+        },
+        
+        md => \sub {
+            my ($comments, $content) = @_;
+            return ($comments, 'txt');
+        }
+    })
+}
+
+
+#================================================================================================================================================================================================================================================
+sub generate_from_mmd {
+    my $self = shift;
+    
+    require Text::MultiMarkdown;
+    
+    $self->process_dist_packages({
+        html => sub {
+            my ($comments, $content) = @_;
+            return (Text::MultiMarkdown::markdown($comments), 'html')
+        },
+        
+        mmd => sub {
+            my ($comments, $content) = @_;
+            return ($comments, 'txt');
+        }
+    })
+}
+
+
+#================================================================================================================================================================================================================================================
+sub process_dist_packages {
+    my ($self, $convertors) = @_;
+    
+    my $lib_dir  = dir('lib');
+    
+    my $js_files = $self->find_dist_packages;
+    
+    
+    foreach my $file (map { $_->{file} } values %$js_files) {
+        my $content = file($file)->slurp;
+        
+        my $comments = $self->strip_doc_comments($content);
+
+
+        foreach my $format (keys(%$convertors)) {
+            
+            #receiving formatted docs
+            my $convertor = $convertors->{$format};
+            
+            my ($result, $result_ext) = &$convertor($comments, $content);
+            
+            
+            #preparing 'doc' directory for current format 
+            my $format_dir = catdir 'doc', $format;
+            
+            unless (-e $format_dir) {
+                File::Path::mkpath($format_dir, 0, 0755) or die "Couldn't mkdir $format_dir: $!";
+                
+                $self->add_to_cleanup($format_dir);
+            }
+            
+            
+            #saving results
+            (my $res = $file) =~ s|^$lib_dir|$format_dir|;
+            
+            $res =~ s/\.js$/.$result_ext/;
+            
+            my $res_dir = dirname $res;
+            
+            unless (-e $res_dir) {
+                File::Path::mkpath($res_dir, 0, 0755) or die "Couldn't mkdir $res_dir: $!";
+            }
+            
+            open my $fh, ">", $res or die "Cannot open $res: $!\n";
+    
+            print $fh $result;
+    
+            close $fh;
+        }
+    }
+}
+
+
+
+#================================================================================================================================================================================================================================================
+sub strip_doc_comments {
+    my ($self, $content) = @_;
+    
+    my @comments = ($content =~ m!^\s*/\*\*(.*?)\*/!msg);
+    
+    return join '', @comments; 
+}
+
+
+#================================================================================================================================================================================================================================================
+sub generate_from_pod {
+    my $self = shift;
+
+    require Pod::Simple::HTML;
+    require Pod::Simple::Text;
+    require Pod::Select;
+
+    for (qw(html text pod)) {
+        my $dir = catdir 'doc', $_;
+        
+        unless (-e $dir) {
+            File::Path::mkpath($dir, 0, 0755) or die "Couldn't mkdir $dir: $!";
+            
+            $self->add_to_cleanup($dir);
+        }
+    }
+
+    my $lib_dir  = catdir 'lib';
+    my $pod_dir  = catdir 'doc', 'pod';
+    my $html_dir = catdir 'doc', 'html';
+    my $txt_dir  = catdir 'doc', 'text';
+
+    my $js_files = $self->find_dist_packages;
+    
+    foreach my $file (map { $_->{file} } values %$js_files) {
+        (my $pod = $file) =~ s|^$lib_dir|$pod_dir|;
+        
+        $pod =~ s/\.js$/.pod/;
+        
+        my $dir = dirname $pod;
+        
+        unless (-e $dir) {
+            File::Path::mkpath($dir, 0, 0755) or die "Couldn't mkdir $dir: $!";
+        }
+        
+        # Ignore existing documentation files.
+        next if -e $pod;
+        
+        
+        open my $fh, ">", $pod or die "Cannot open $pod: $!\n";
+
+        Pod::Select::podselect( { -output => $fh }, $file );
+
+        print $fh "\n=cut\n";
+
+        close $fh;
+    }
+    
+
+    for my $pod (@{Module::Build->rscan_dir($pod_dir, qr/\.pod$/)}) {
+        # Generate HTML docs.
+        (my $html = $pod) =~ s|^\Q$pod_dir|$html_dir|;
+        
+        $html =~ s/\.pod$/.html/;
+        
+        my $dir = dirname $html;
+        
+        unless (-e $dir) {
+            File::Path::mkpath($dir, 0, 0755) or die "Couldn't mkdir $dir: $!";
+        }
+        
+        open my $fh, ">", $html or die "Cannot open $html: $!\n";
+        
+        my $parser = Pod::Simple::HTML->new;
+        $parser->output_fh($fh);
+        $parser->parse_file($pod);
+        
+        close $fh;
+
+        # Generate text docs.
+        (my $txt = $pod) =~ s|^\Q$pod_dir|$txt_dir|;
+        
+        $txt =~ s/\.pod$/.txt/;
+        
+        $dir = dirname $txt;
+        
+        unless (-e $dir) {
+            File::Path::mkpath($dir, 0, 0755) or die "Couldn't mkdir $dir: $!";
+        }
+        
+        open $fh, ">", $txt or die "Cannot open $txt: $!\n";
+        
+        $parser = Pod::Simple::Text->new;
+        $parser->output_fh($fh);
+        $parser->parse_file($pod);
+        
+        close $fh;
+    }
+}
+
 
 
 __PACKAGE__ # nothingmuch (c) 
