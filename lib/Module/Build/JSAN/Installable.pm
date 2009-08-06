@@ -203,23 +203,44 @@ sub ACTION_test {
 
 
 #================================================================================================================================================================================================================================================
-sub ACTION_doc {
+sub ACTION_dist {
+    my $self = shift;
+
+    $self->depends_on('doc');
+    $self->depends_on('manifest');
+    $self->depends_on('distdir');
+
+    my $dist_dir = $self->dist_dir;
+
+    $self->_strip_pod($dist_dir);
+
+    $self->make_tarball($dist_dir);
+    $self->delete_filetree($dist_dir);
+
+#    $self->add_to_cleanup('META.json');
+#    $self->add_to_cleanup('*.gz');
+}
+
+
+
+#================================================================================================================================================================================================================================================
+sub ACTION_docs {
     my $self = shift;
     
     my $markup = $self->docs_markup;
     
     if ($markup eq 'pod') {
-        $self->generate_from_pod()
+        $self->generate_docs_from_pod()
     } elsif ($markup eq 'md') {
-        $self->generate_from_md()
+        $self->generate_docs_from_md()
     } elsif ($markup eq 'mmd') {
-        $self->generate_from_mmd()
+        $self->generate_docs_from_mmd()
     }
 }
 
 
 #================================================================================================================================================================================================================================================
-sub generate_from_md {
+sub generate_docs_from_md {
     my $self = shift;
     
     require Text::Markdown;
@@ -239,7 +260,7 @@ sub generate_from_md {
 
 
 #================================================================================================================================================================================================================================================
-sub generate_from_mmd {
+sub generate_docs_from_mmd {
     my $self = shift;
     
     require Text::MultiMarkdown;
@@ -317,14 +338,14 @@ sub process_dist_packages {
 sub strip_doc_comments {
     my ($self, $content) = @_;
     
-    my @comments = ($content =~ m!^\s*/\*\*(.*?)\*/!msg);
+    my @comments = ($content =~ m[^\s*/\*\*(.*?)\*/]msg);
     
     return join '', @comments; 
 }
 
 
 #================================================================================================================================================================================================================================================
-sub generate_from_pod {
+sub generate_docs_from_pod {
     my $self = shift;
 
     require Pod::Simple::HTML;
@@ -442,7 +463,8 @@ In F<Build.PL>:
           'Test.Simple' => 0.20,
       },
       
-      static_dir => 'assets'
+      static_dir => 'assets',
+      docs_markup => 'mmd'
   );
 
   $build->create_build_script;
@@ -545,7 +567,16 @@ JSAN library. This way you can access any module from it, with URLs like:
 B<'/jsan/Test/Run.js'>  
 
 
-=item 2 ./Build task [--task_name=foo]
+=item 2 ./Build docs
+
+This action will build a documentation files for this distribution. Default markup for documentation is POD. Alternative markup 
+can be specified with B<docs_markup> configuration parameter (see Synopsis). Currently supported markups: 'pod', 
+'md' (Markdown via Text::Markdown), 'mmd' (MultiMarkdown via Text::MultiMarkdown). 
+
+Resulting documentation files will be placed under B</docs> directory, categorized by the formats. For 'pod' markup there will be
+/doc/html, /doc/pod and /doc/text directories. For 'md' and 'mmd' markups there will be /doc/html and /doc/[m]md directories.
+
+=item 3 ./Build task [--task_name=foo]
 
 This action will build a specific concatenated version (task) of current distribution.
 Default task name is B<'core'>, task name can be specified with B<--task_name> command line option.
@@ -557,7 +588,7 @@ After concatenation, resulting file is placed on the following path: B</lib/Task
 considering the name of your distribution was B<Distribution::Name> and the task name was B<sample_task>
 
 
-=item 3 ./Build test
+=item 4 ./Build test
 
 This action relies on not yet released JSAN::Prove module, stay tuned for further updates.
 
