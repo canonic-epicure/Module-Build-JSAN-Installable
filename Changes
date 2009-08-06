@@ -1,5 +1,11 @@
 Revision history for Module-Build-JSAN-Installable
 
+0.04    2009/08/6
+        - fixed dependency from 'docs' action in 'dist' action
+        
+0.03    2009/08/6
+        - implemented initial support for Markdown and MultiMarkdown markups in documentation
+        
 0.02    2009/07/21
         - fixed missed dependency from JSON.pm (thanks to Dan Brook (broquaint) for report)
         - some progress on documentation

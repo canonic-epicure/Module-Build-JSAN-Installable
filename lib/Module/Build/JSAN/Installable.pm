@@ -3,7 +3,7 @@ package Module::Build::JSAN::Installable;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 use Module::Build::JSAN;
 @ISA = qw(Module::Build::JSAN);
@@ -206,7 +206,7 @@ sub ACTION_test {
 sub ACTION_dist {
     my $self = shift;
 
-    $self->depends_on('doc');
+    $self->depends_on('docs');
     $self->depends_on('manifest');
     $self->depends_on('distdir');
 
