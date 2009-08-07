@@ -1,5 +1,8 @@
 Revision history for Module-Build-JSAN-Installable
 
+0.05   ???????
+        - ignoring git repo in MANIFEST
+        
 0.04    2009/08/6
         - fixed dependency from 'docs' action in 'dist' action
         

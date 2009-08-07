@@ -436,6 +436,20 @@ sub generate_docs_from_pod {
 }
 
 
+#================================================================================================================================================================================================================================================
+sub _write_default_maniskip {
+    my $self = shift;
+    my $file = shift || 'MANIFEST.SKIP';
+
+    $self->SUPER::_write_default_maniskip($file);
+
+    my $fh = IO::File->new(">> $file") or die "Can't open $file: $!";
+    print $fh <<'EOF';
+\.project$
+^\.git\b
+EOF
+    $fh->close();
+}
 
 __PACKAGE__ # nothingmuch (c) 
 
