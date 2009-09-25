@@ -44,29 +44,6 @@ sub get_jsan_libroot {
 }
 
 
-##================================================================================================================================================================================================================================================
-## workaround for http://rt.cpan.org/Public/Bug/Display.html?id=43515
-## should be 'our', because 'resume' calls with package name
-#our $skip_install_paths = 0;
-#
-#sub resume {
-#    $skip_install_paths = 1;
-#    my $res = shift->SUPER::resume(@_);
-#    $skip_install_paths = 0;
-#    
-#    return $res;
-#}
-#
-#
-#sub _set_install_paths {
-#    return if $skip_install_paths;
-#    
-#    shift->SUPER::_set_install_paths(@_);
-#}
-## eof workaround 
-
-
-
 #================================================================================================================================================================================================================================================
 sub process_static_files {
 	my $self = shift;
