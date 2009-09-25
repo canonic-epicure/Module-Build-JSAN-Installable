@@ -3,7 +3,7 @@ package Module::Build::JSAN::Installable;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 use Module::Build::JSAN;
 @ISA = qw(Module::Build::JSAN);
@@ -14,10 +14,6 @@ use File::Basename qw(dirname);
 use Path::Class;
 use Config;
 use JSON;
-
-
-#XXX for debugging
-#use Data::Dump;
 
 
 __PACKAGE__->add_property('task_name' => 'core');
@@ -41,32 +37,33 @@ sub new {
 }
 
 
+
 #================================================================================================================================================================================================================================================
 sub get_jsan_libroot {
 	return $ENV{JSANLIB} || ($^O eq 'MSWin32') ? 'c:\JSAN' : (split /\s+/, $Config{'libspath'})[1] . '/jsan';
 }
 
 
-#================================================================================================================================================================================================================================================
-# workaround for http://rt.cpan.org/Public/Bug/Display.html?id=43515
-# should be 'our', because 'resume' calls with package name
-our $skip_install_paths = 0;
-
-sub resume {
-    $skip_install_paths = 1;
-    my $res = shift->SUPER::resume(@_);
-    $skip_install_paths = 0;
-    
-    return $res;
-}
-
-
-sub _set_install_paths {
-    return if $skip_install_paths;
-    
-    shift->SUPER::_set_install_paths(@_);
-}
-# eof workaround 
+##================================================================================================================================================================================================================================================
+## workaround for http://rt.cpan.org/Public/Bug/Display.html?id=43515
+## should be 'our', because 'resume' calls with package name
+#our $skip_install_paths = 0;
+#
+#sub resume {
+#    $skip_install_paths = 1;
+#    my $res = shift->SUPER::resume(@_);
+#    $skip_install_paths = 0;
+#    
+#    return $res;
+#}
+#
+#
+#sub _set_install_paths {
+#    return if $skip_install_paths;
+#    
+#    shift->SUPER::_set_install_paths(@_);
+#}
+## eof workaround 
 
 
 
@@ -227,6 +224,15 @@ sub ACTION_dist {
 sub ACTION_docs {
     my $self = shift;
     
+    #preparing 'doc' directory possible adding to cleanup 
+    my $doc_dir = catdir 'doc';
+    
+    unless (-e $doc_dir) {
+        File::Path::mkpath($doc_dir, 0, 0755) or die "Couldn't mkdir $doc_dir: $!";
+        
+        $self->add_to_cleanup($doc_dir);
+    }
+    
     my $markup = $self->docs_markup;
     
     if ($markup eq 'pod') {
@@ -321,8 +327,10 @@ sub process_dist_packages {
             
             unless (-e $res_dir) {
                 File::Path::mkpath($res_dir, 0, 0755) or die "Couldn't mkdir $res_dir: $!";
+                
+                $self->add_to_cleanup($res_dir);
             }
-            
+
             open my $fh, ">", $res or die "Cannot open $res: $!\n";
     
             print $fh $result;
@@ -445,8 +453,9 @@ sub _write_default_maniskip {
 
     my $fh = IO::File->new(">> $file") or die "Can't open $file: $!";
     print $fh <<'EOF';
-\.project$
+^\.project$
 ^\.git\b
+^\.externalToolBuilders\b
 EOF
     $fh->close();
 }
@@ -542,7 +551,7 @@ In F<Components.js>:
 
 =head1 VERSION
 
-Version 0.01
+Version 0.05
 
 =cut
 

@@ -17,10 +17,15 @@ my $builder = Module::Build->new(
     create_makefile_pl => 'passthrough',
     
     requires           => {
+		'Module::Build' => '0.35',
 		'Module::Build::JSAN' => '0.05',
 		'Path::Class' => '0.16',
 		'JSON' => '2.00',
 		'Text::Markdown' => '1.0.24'
+    },
+    
+    test_requires       => {
+        'Capture::Tiny' => 0.06
     }
     
 );
