@@ -16,7 +16,7 @@ use Config;
 use JSON;
 
 
-__PACKAGE__->add_property('task_name' => 'core');
+__PACKAGE__->add_property('task_name' => 'Core');
 __PACKAGE__->add_property('static_dir' => 'static');
 __PACKAGE__->add_property('docs_markup' => 'pod');
 
@@ -480,49 +480,46 @@ To build, test and install a distribution:
 
 In F<Components.js>:
 
-  COMPONENTS = {
-      
-      "kernel" : [
-          "JooseX.Namespace.Depended.Manager",
-          "JooseX.Namespace.Depended.Resource",
-          
-          "JooseX.Namespace.Depended.Materialize.Code"
-      ],
-      
-      
-      "web" : [
-          "+kernel",
-      
-          "JooseX.Namespace.Depended.Transport.AjaxAsync",
-          "JooseX.Namespace.Depended.Transport.AjaxSync",
-          "JooseX.Namespace.Depended.Transport.ScriptTag",
-          
-          "JooseX.Namespace.Depended.Resource.URL",
-          "JooseX.Namespace.Depended.Resource.URL.JS",
-          "JooseX.Namespace.Depended.Resource.JS",
-          "JooseX.Namespace.Depended.Resource.JS.External",
-          
-          //should be the last        
-          "JooseX.Namespace.Depended"
-      ],
-  	
-      
-      "core" : [
-          "+web"
-      ],
-      
-      
-      "serverjs" : [
-          "+kernel",
-          
-          "JooseX.Namespace.Depended.Transport.Require",
-          "JooseX.Namespace.Depended.Resource.Require",
-          
-          //should be the last
-          "JooseX.Namespace.Depended"
-      ]
-  	
-  } 
+    COMPONENTS = {
+        
+        "Kernel" : [
+            "JooseX.Namespace.Depended.Manager",
+            "JooseX.Namespace.Depended.Resource",
+            
+            "JooseX.Namespace.Depended.Materialize.Eval",
+            "JooseX.Namespace.Depended.Materialize.ScriptTag"
+        ],
+        
+        
+        "Web" : [
+            "+Kernel",
+        
+            "JooseX.Namespace.Depended.Transport.AjaxAsync",
+            "JooseX.Namespace.Depended.Transport.AjaxSync",
+            "JooseX.Namespace.Depended.Transport.ScriptTag",
+            
+            "JooseX.Namespace.Depended.Resource.URL",
+            "JooseX.Namespace.Depended.Resource.URL.JS",
+            "JooseX.Namespace.Depended.Resource.JS",
+            "JooseX.Namespace.Depended.Resource.JS.External",
+            
+            //should be the last        
+            "JooseX.Namespace.Depended"
+        ],
+        
+        
+        "ServerJS" : [
+            "+Kernel",
+            
+            "JooseX.Namespace.Depended.Transport.Require",
+            "JooseX.Namespace.Depended.Resource.Require",
+            
+            //should be the last
+            "JooseX.Namespace.Depended"
+        ]
+        
+    } 
+
 	
 
 
@@ -542,35 +539,18 @@ L<http://www.openjsan.org/> for details.
 This module works nearly identically to L<Module::Build::JSAN>, so please refer to
 its documentation for additional details.
 
-
 =head1 DIFFERENCES
 
 =over 4
 
 =item 1 ./Build install
 
-This action will install current distribution in your local JSAN library.
-The path to the library is resolved in the following order:
-
-
-- B<--install_base> command-line argument
-
-- environment variable B<JSAN_LIB>
-
-- Either the first directory in B<$Config{libspath}>, followed with '/jsan' (probably '/usr/local/lib' on linux systems)
-or B<'C:\JSAN'> (on Windows)
-
-
-As a convention, it is recommended, that you configure your local web-server
-that way, that B</jsan> will point at the B</lib> subdirectory of your local
-JSAN library. This way you can access any module from it, with URLs like:
-B<'/jsan/Test/Run.js'>  
-
+This action will install current distribution in your local JSAN library. See below for details.
 
 =item 2 ./Build docs
 
 This action will build a documentation files for this distribution. Default markup for documentation is POD. Alternative markup 
-can be specified with B<docs_markup> configuration parameter (see Synopsis). Currently supported markups: 'pod', 
+can be specified with C<docs_markup> configuration parameter (see Synopsis). Currently supported markups: 'pod', 
 'md' (Markdown via Text::Markdown), 'mmd' (MultiMarkdown via Text::MultiMarkdown). 
 
 Resulting documentation files will be placed under B</docs> directory, categorized by the formats. For 'pod' markup there will be
@@ -579,13 +559,13 @@ Resulting documentation files will be placed under B</docs> directory, categoriz
 =item 3 ./Build task [--task_name=foo]
 
 This action will build a specific concatenated version (task) of current distribution.
-Default task name is B<'core'>, task name can be specified with B<--task_name> command line option.
+Default task name is B<'Core'>, task name can be specified with C<--task_name> command line option.
 
 Information about tasks is stored in the B<Components.JS> file in the root of distribution.
 See the Synposys for example of B<Components.JS>. 
 
-After concatenation, resulting file is placed on the following path: B</lib/Task/Distribution/Name/sample_task.js>, 
-considering the name of your distribution was B<Distribution::Name> and the task name was B<sample_task>
+After concatenation, resulting file is placed on the following path: B</lib/Task/Distribution/Name/SampleTask.js>, 
+considering the name of your distribution was B<Distribution.Name> and the task name was B<SampleTask>
 
 
 =item 4 ./Build test
@@ -595,12 +575,33 @@ This action relies on not yet released JSAN::Prove module, stay tuned for furthe
 =back
 
 
+=head1 LOCAL JSAN LIBRARY
+
+This module uses concept of local JSAN library, which is organized in the same way as perl library.
+
+The path to the library is resolved in the following order:
+
+1. B<--install_base> command-line argument
+
+2. environment variable B<JSAN_LIB>
+
+3. Either the first directory in C<$Config{libspath}>, followed with C</jsan> (probably C</usr/local/lib> on linux systems)
+or C<C:\JSAN> (on Windows)
+
+As a convention, it is recommended, that you configure your local web-server
+that way, that B</jsan> will point at the B</lib> subdirectory of your local
+JSAN library. This way you can access any module from it, with URLs like:
+B<'/jsan/Test/Run.js'>  
+
+
+
+
 =head1 STATIC FILES HANDLING
 
 Under static files we'll assume any files other than javascript (*.js). Typically those are *.css files and images (*.jpg, *.gif, *.png etc).
 
 All static files should be placed in the 'static directory'. Default name for static directory is B<'/static'>. 
-Alternative name can be specified with B<static_dir> configuration parameter (see Synopsis). Static directory can be organized in any way you prefere.
+Alternative name can be specified with C<static_dir> configuration parameter (see Synopsis). Static directory can be organized in any way you prefere.
 
 Lets assume you have the following distribution structure:
 
