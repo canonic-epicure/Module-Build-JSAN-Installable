@@ -17,7 +17,7 @@ use JSON;
 
 
 __PACKAGE__->add_property('task_name' => 'Core');
-__PACKAGE__->add_property('static_dir' => 'static');
+__PACKAGE__->add_property('static_dir' => 'share');
 __PACKAGE__->add_property('docs_markup' => 'pod');
 
 
@@ -595,25 +595,24 @@ B<'/jsan/Test/Run.js'>
 
 
 
+=head1 SHARED FILES HANDLING
 
-=head1 STATIC FILES HANDLING
+Under shared files we'll assume any files other than javascript (*.js). Typically those are *.css files and images (*.jpg, *.gif, *.png etc).
 
-Under static files we'll assume any files other than javascript (*.js). Typically those are *.css files and images (*.jpg, *.gif, *.png etc).
-
-All static files should be placed in the 'static directory'. Default name for static directory is B<'/static'>. 
-Alternative name can be specified with C<static_dir> configuration parameter (see Synopsis). Static directory can be organized in any way you prefere.
+All such files should be placed in the "share" directory. Default name for share directory is B<'/share'>. 
+Alternative name can be specified with C<static_dir> configuration parameter (see Synopsis). Share directory can be organized in any way you prefere.
 
 Lets assume you have the following distribution structure:
 
   /lib/Distribution/Name.js
-  /static/css/style1.css 
-  /static/img/image1.png
+  /share/css/style1.css 
+  /share/img/image1.png
 
 After building (B<./Build>) it will be processed as:
 
   /blib/lib/Distribution/Name.js
-  /blib/lib/Distribution/Name/static/css/style1.css 
-  /blib/lib/Distribution/Name/static/img/image1.png
+  /blib/lib/Distribution/Name/share/css/style1.css 
+  /blib/lib/Distribution/Name/share/img/image1.png
 
 During installation (B<./Build install>) the whole 'blib' tree along with static files will be installed in your local library.
 

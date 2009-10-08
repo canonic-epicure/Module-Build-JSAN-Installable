@@ -17,7 +17,8 @@ my $builder = Module::Build->new(
 		'Module::Build::JSAN'     => '0.05',
 		'Path::Class'             => '0.16',
 		'JSON'                    => '2.00',
-		'Text::Markdown'          => '1.0.24'
+		'Text::Markdown'          => '1.0.26',
+		'Text::MultiMarkdown'     => '1.0.29'
     },
     
     build_requires => {
