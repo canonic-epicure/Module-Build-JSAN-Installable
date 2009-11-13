@@ -17,7 +17,7 @@ use JSON;
 
 
 __PACKAGE__->add_property('task_name' => 'Core');
-__PACKAGE__->add_property('static_dir' => 'share');
+__PACKAGE__->add_property('static_dir' => 'static');
 __PACKAGE__->add_property('docs_markup' => 'pod');
 
 
