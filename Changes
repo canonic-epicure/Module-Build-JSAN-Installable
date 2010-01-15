@@ -1,10 +1,8 @@
 Revision history for Module-Build-JSAN-Installable
 
-0.05   ???????
+0.05    01/15/2010
         - ignoring git repo in MANIFEST
         - removed workaround for Module::Build RT #46611, required Module::Build 0.35 instead
-        - 'static_dir' property renamed to 'install_share'
-        - default "static directory" renamed to 'share'
         
 0.04    2009/08/6
         - fixed dependency from 'docs' action in 'dist' action

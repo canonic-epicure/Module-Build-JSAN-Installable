@@ -1,0 +1,8 @@
+^todo\b
+^blib\b
+^\.git\b
+^_build\b
+^\.gitignore\b
+^\.project\b
+^pod2.*\.tmp
+^pm_to_blib
