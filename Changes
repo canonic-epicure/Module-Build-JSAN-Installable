@@ -1,5 +1,12 @@
 Revision history for Module-Build-JSAN-Installable
 
+0.06    01/19/2010
+        - Fixed test case, relying on examination of Module::Build internals,
+        which have slightly changed since 0.35_01
+        - Capture::Tiny moved from 'test_requires' to 'build_requires' since the 1st
+        option seems not being picked up on some systems
+        - removed Makefile.PL which also seems confuse some systems  
+
 0.05    01/15/2010
         - ignoring git repo in MANIFEST
         - removed workaround for Module::Build RT #46611, required Module::Build 0.35 instead

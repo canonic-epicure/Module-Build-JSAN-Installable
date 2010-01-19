@@ -17,3 +17,5 @@ META.yml
 Makefile
 *.tmp
 .project
+/todo/*
+MYMETA.yml

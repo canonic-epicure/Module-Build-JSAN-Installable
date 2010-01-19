@@ -1,12 +1,11 @@
-Build
 Build.PL
 Changes
 lib/Module/Build/JSAN/Installable.pm
-Makefile.PL
 MANIFEST
 MANIFEST.bak
-MANIFEST.SKIP
 META.yml
+Module-Build-JSAN-Installable-0.06/Changes
+Module-Build-JSAN-Installable-0.06/META.yml
 README
 t/00-load.t
 t/01_basic_and_share.t

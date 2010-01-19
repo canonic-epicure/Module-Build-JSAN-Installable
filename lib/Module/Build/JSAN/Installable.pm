@@ -3,7 +3,7 @@ package Module::Build::JSAN::Installable;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 use Module::Build::JSAN;
 @ISA = qw(Module::Build::JSAN);
@@ -191,7 +191,7 @@ sub ACTION_dist {
     $self->make_tarball($dist_dir);
     $self->delete_filetree($dist_dir);
 
-#    $self->add_to_cleanup('META.json');
+    $self->add_to_cleanup('META.json');
 #    $self->add_to_cleanup('*.gz');
 }
 
@@ -525,7 +525,7 @@ In F<Components.js>:
 
 =head1 VERSION
 
-Version 0.05
+Version 0.06
 
 =cut
 

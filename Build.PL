@@ -10,7 +10,6 @@ my $builder = Module::Build->new(
     dist_version_from   => 'lib/Module/Build/JSAN/Installable.pm',
     
     add_to_cleanup      => [ 'Module-Build-JSAN-Installable-*' ],
-    create_makefile_pl  => 'passthrough',
     
     requires            => {
 		'Module::Build'           => '0.35',
@@ -23,11 +22,8 @@ my $builder = Module::Build->new(
     
     build_requires => {
         'Test::More'              => 0,
-    },
-    test_requires       => {
         'Capture::Tiny'           => 0.06
     }
-    
 );
 
 $builder->create_build_script();

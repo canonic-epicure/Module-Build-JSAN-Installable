@@ -42,7 +42,7 @@ is_deeply($build->dist_author(), $test2, 'dist_author is correct (single)');
 #================================================================================================================================================================================================================================================
 diag( "Checking build elements" );
 
-my $test3 = [qw(PL support pm xs pod script js static)];
+my $test3 = $Module::Build::VERSION ge '0.35_01' ? [qw(PL support pm xs share_dir pod script js static)] : [qw(PL support pm xs pod script js static)];
 
 is_deeply($build->build_elements(), $test3, 'build_elements list is correct');
 
@@ -79,6 +79,7 @@ is($build->create_makefile_pl(), 'passthrough', 'create_makefile_pl is correct')
 
 # Cleanup
 (undef, undef) = capture { $build->dispatch('realclean'); };
+unlink('META.json') if -e 'META.json';
 unlink('Build.bat') if -e 'Build.bat';
 unlink('Build.com') if -e 'Build.com';
 
