@@ -1,5 +1,8 @@
 Revision history for Module-Build-JSAN-Installable
 
+0.07	01/21/2010
+	- Trying ShipIt as release tool
+
 0.06    01/19/2010
         - Fixed test case, relying on examination of Module::Build internals,
         which have slightly changed since 0.35_01

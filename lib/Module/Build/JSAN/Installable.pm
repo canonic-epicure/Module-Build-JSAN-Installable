@@ -3,7 +3,7 @@ package Module::Build::JSAN::Installable;
 use strict;
 use vars qw($VERSION @ISA);
 
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 use Module::Build::JSAN;
 @ISA = qw(Module::Build::JSAN);
