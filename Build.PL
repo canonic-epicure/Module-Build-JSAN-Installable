@@ -9,8 +9,6 @@ my $builder = Module::Build->new(
     dist_author         => 'Nickolay Platonov <nplatonov@cpan.org>',
     dist_version_from   => 'lib/Module/Build/JSAN/Installable.pm',
     
-    add_to_cleanup      => [ 'Module-Build-JSAN-Installable-*' ],
-    
     requires            => {
 		'Module::Build'           => '0.35',
 		'Module::Build::JSAN'     => '0.05',

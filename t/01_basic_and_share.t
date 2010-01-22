@@ -1,7 +1,7 @@
 BEGIN {
 	$| = 1;
 }
-use Test::More tests => 8;
+use Test::More tests => 9;
 use File::Spec::Functions qw(catdir catfile);
 use Module::Build::JSAN::Installable;
 use Cwd;
@@ -67,6 +67,12 @@ my $test5 = {
 };
 
 is_deeply($build->build_requires(), $test5, 'build_requires list is correct');
+
+
+#================================================================================================================================================================================================================================================
+diag( "Checking 'configure_requires'" );
+
+is_deeply($build->configure_requires(), {}, 'configure_requires list is correct');
 
 
 #================================================================================================================================================================================================================================================
