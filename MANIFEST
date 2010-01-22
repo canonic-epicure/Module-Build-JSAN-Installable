@@ -7,6 +7,11 @@ META.yml
 README
 t/00-load.t
 t/01_basic_and_share.t
+t/02_separate_docs_file.t
+t/MBJI-SeparateDocFile/Build.PL
+t/MBJI-SeparateDocFile/lib/Digest/MD5.js
+t/MBJI-SeparateDocFile/lib/Digest/MD5.mmd
+t/MBJI-SeparateDocFile/README
 t/MBJI-Test1/Build.PL
 t/MBJI-Test1/lib/Digest/MD5.js
 t/MBJI-Test1/README

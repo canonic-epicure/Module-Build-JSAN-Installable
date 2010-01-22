@@ -2,6 +2,9 @@ Revision history for Module-Build-JSAN-Installable
 
 0.07	01/21/2010
 	    - Trying ShipIt as release tool
+	    - Suppressed adding 'Module::Build' to 'configure_requires'
+	    - Suppressed prerequisites checking on initial run
+	    - Implemented ability to pickup the separate documentation file 
 
 0.06    01/19/2010
         - Fixed test case, relying on examination of Module::Build internals,

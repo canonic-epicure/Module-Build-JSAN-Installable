@@ -201,6 +201,8 @@ sub ACTION_dist {
 sub ACTION_docs {
     my $self = shift;
     
+    $self->depends_on('manifest');
+    
     #preparing 'doc' directory possible adding to cleanup 
     my $doc_dir = catdir 'doc';
     
@@ -228,7 +230,7 @@ sub generate_docs_from_md {
     
     require Text::Markdown;
     
-    $self->process_dist_packages({
+    $self->extract_inlined_docs({
         html => \sub {
             my ($comments, $content) = @_;
             return (Text::Markdown::markdown($comments), 'html')
@@ -248,7 +250,7 @@ sub generate_docs_from_mmd {
     
     require Text::MultiMarkdown;
     
-    $self->process_dist_packages({
+    $self->extract_inlined_docs({
         html => sub {
             my ($comments, $content) = @_;
             return (Text::MultiMarkdown::markdown($comments), 'html')
@@ -263,18 +265,20 @@ sub generate_docs_from_mmd {
 
 
 #================================================================================================================================================================================================================================================
-sub process_dist_packages {
+sub extract_inlined_docs {
     my ($self, $convertors) = @_;
     
-    my $lib_dir  = dir('lib');
-    
-    my $js_files = $self->find_dist_packages;
+    my $markup      = $self->docs_markup;
+    my $lib_dir     = dir('lib');
+    my $js_files    = $self->find_dist_packages;
     
     
     foreach my $file (map { $_->{file} } values %$js_files) {
+        (my $separate_docs_file = $file) =~ s|\.js$|.$markup|;
+        
         my $content = file($file)->slurp;
         
-        my $comments = $self->strip_doc_comments($content);
+        my $docs_content = -e $separate_docs_file ? file($separate_docs_file)->slurp : $self->strip_doc_comments($content);
 
 
         foreach my $format (keys(%$convertors)) {
@@ -282,7 +286,7 @@ sub process_dist_packages {
             #receiving formatted docs
             my $convertor = $convertors->{$format};
             
-            my ($result, $result_ext) = &$convertor($comments, $content);
+            my ($result, $result_ext) = &$convertor($docs_content, $content);
             
             
             #preparing 'doc' directory for current format 
@@ -307,7 +311,7 @@ sub process_dist_packages {
                 
                 $self->add_to_cleanup($res_dir);
             }
-
+            
             open my $fh, ">", $res or die "Cannot open $res: $!\n";
     
             print $fh $result;
@@ -578,6 +582,13 @@ can be specified with C<docs_markup> configuration parameter (see Synopsis). Cur
 
 Resulting documentation files will be placed under B</docs> directory, categorized by the formats. For 'pod' markup there will be
 /doc/html, /doc/pod and /doc/text directories. For 'md' and 'mmd' markups there will be /doc/html and /doc/[m]md directories.
+
+For 'md' and 'mmd' markups, its possible to keep the module's documentation in separate file. The file should have the same name as module,
+with extensions, changed to markup abbreviature. An example:
+
+      /lib/Module/Name.js
+      /lib/Module/Name.mmd
+      
 
 =item 3 ./Build task [--task_name=foo]
 
