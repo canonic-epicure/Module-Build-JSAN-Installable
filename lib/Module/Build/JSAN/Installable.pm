@@ -464,6 +464,17 @@ sub check_autofeatures {
 }
 
 
+#================================================================================================================================================================================================================================================
+sub prepare_metadata {
+    my ($self, $node, $keys, $args) = @_;
+    
+    $self->meta_add('static_dir' => $self->static_dir);
+    
+    return $self->SUPER::prepare_metadata($node, $keys, $args);    
+}
+
+
+
 __PACKAGE__ # nothingmuch (c) 
 
 __END__

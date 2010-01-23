@@ -20,7 +20,9 @@ my $build = Module::Build::JSAN::Installable->new(
     build_requires       => {
         'Building.JS.Lib' => '1.1',
         'Another.Building.JS.Lib' => '1.2'
-    }
+    },
+    
+    static_dir  => 'assets'
 );
 
 $build->create_build_script;

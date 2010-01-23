@@ -1,11 +1,13 @@
 BEGIN {
 	$| = 1;
 }
-use Test::More tests => 9;
+use Test::More tests => 11;
 use File::Spec::Functions qw(catdir catfile);
 use Module::Build::JSAN::Installable;
 use Cwd;
 use Capture::Tiny qw(capture);
+use Path::Class;
+use JSON;
 
 
 diag( "Using Module::Build::JSAN::Installable $Module::Build::JSAN::Installable::VERSION" );
@@ -24,6 +26,7 @@ diag( "Running ./Build on test distribution #1" );
 
 ok(-e '_build', 'Build.PL appeared to execute correctly');
 ok(-e 'Build', 'Building script was created');
+ok(-e 'META.json', 'META.json was created');
 
 my $build = Module::Build::JSAN::Installable->current();
 
@@ -81,6 +84,14 @@ diag( "Various options" );
 is($build->license(), 'perl', 'license is correct');
 
 is($build->create_makefile_pl(), 'passthrough', 'create_makefile_pl is correct');
+
+
+#================================================================================================================================================================================================================================================
+# Static directory name should be saved into META.json
+
+my $meta = decode_json file('META.json')->slurp();
+
+ok($meta->{static_dir} eq 'assets', 'Non-standard name for static dir was saved in meta-file');
 
 
 # Cleanup
