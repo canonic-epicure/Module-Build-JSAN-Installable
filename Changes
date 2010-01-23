@@ -1,5 +1,8 @@
 Revision history for Module-Build-JSAN-Installable
 
+0.08	01/23/2010
+	    - 'static_dir' property now saved to metadata
+
 0.07	01/21/2010
 	    - Trying ShipIt as release tool
 	    - Suppressed adding 'Module::Build' to 'configure_requires'

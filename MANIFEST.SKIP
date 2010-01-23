@@ -39,3 +39,4 @@
 ^MYMETA.yml$
 
 ^\.shipit\b
+^Changes~$
