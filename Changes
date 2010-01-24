@@ -1,5 +1,8 @@
 Revision history for Module-Build-JSAN-Installable
 
+0.09	01/24/2010
+	    - fixed bug in the test suite, which appears on some platforms
+	    
 0.08	01/23/2010
 	    - 'static_dir' property now saved to metadata
 

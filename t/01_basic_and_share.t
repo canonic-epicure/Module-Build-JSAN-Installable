@@ -89,7 +89,7 @@ is($build->create_makefile_pl(), 'passthrough', 'create_makefile_pl is correct')
 #================================================================================================================================================================================================================================================
 # Static directory name should be saved into META.json
 
-my $meta = decode_json file('META.json')->slurp();
+my $meta = decode_json(file('META.json')->slurp() . "");
 
 ok($meta->{static_dir} eq 'assets', 'Non-standard name for static dir was saved in meta-file');
 
