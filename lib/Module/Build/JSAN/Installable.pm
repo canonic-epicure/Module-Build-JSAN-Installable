@@ -1,9 +1,7 @@
 package Module::Build::JSAN::Installable;
 
 use strict;
-use vars qw($VERSION @ISA);
-
-$VERSION = '0.09';
+use vars qw(@ISA);
 
 use Module::Build::JSAN;
 @ISA = qw(Module::Build::JSAN);
@@ -558,12 +556,6 @@ In F<Components.js>:
         
     } 
 
-	
-
-
-=head1 VERSION
-
-Version 0.06
 
 =cut
 
