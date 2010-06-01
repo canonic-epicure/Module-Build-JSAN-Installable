@@ -20,3 +20,4 @@ Makefile
 /todo/*
 MYMETA.yml
 Changes~
+.build
