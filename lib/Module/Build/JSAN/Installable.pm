@@ -114,17 +114,25 @@ sub ACTION_task {
 
 	my $deploys = decode_json $components;
 	
-	#expanding +deploy_variant entries
-	foreach my $deploy (keys(%$deploys)) {
-		
-		$deploys->{$deploy} = [ map { 
-			
-			/^\+(.+)/ ? @{$deploys->{$1}} : $_;
-			
-		} @{$deploys->{$deploy}} ];
-	}
-
 	$self->concatenate_for_task($deploys, $self->task_name);
+}
+
+
+#================================================================================================================================================================================================================================================
+sub expand_task_entry {
+    my ($self, $deploys, $task_name, $seen) = @_;
+    
+    $seen = {} if !$seen;
+    
+    die "Recursive visit to task [$task_name] when expanding entries" if $seen->{ $task_name };
+    
+    $seen->{ $task_name } = 1; 
+    
+    return map { 
+			
+		/^\+(.+)/ ? $self->expand_task_entry($deploys, $1, $seen) : $_;
+		
+	} @{$deploys->{ $task_name }};    
 }
 
 
@@ -139,8 +147,8 @@ sub concatenate_for_task {
     	}
     
     } else {
-	    my $components = $deploys->{$task_name};
-	    die "Invalid task name: [$task_name]" unless $components;
+	    my @components = $self->expand_task_entry($deploys, $task_name);
+	    die "No components in task: [$task_name]" unless @components > 0;
 	    
 	    my @dist_dirs = split /\./, $self->dist_name();
 	    push @dist_dirs, $task_name;
@@ -151,7 +159,7 @@ sub concatenate_for_task {
 	    
 	    my $bundle_fh = $bundle_file->openw(); 
 	    
-	    foreach my $comp (@$components) {
+	    foreach my $comp (@components) {
 	        print $bundle_fh $self->comp_to_filename($comp)->slurp . ";\n";
 	    }
 	    
