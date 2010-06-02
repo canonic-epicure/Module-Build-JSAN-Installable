@@ -28,8 +28,8 @@ COMPONENTS = {
     ],
     
     "Part23" : [
-    	"jsan://File1",
+    	"jsan:File1",
     	"Part2.File3",
-    	"jsan://File2"
+    	"jsan:File2"
     ]
 }

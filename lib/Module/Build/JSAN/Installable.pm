@@ -38,7 +38,7 @@ sub new {
 
 #================================================================================================================================================================================================================================================
 sub get_jsan_libroot {
-	return $ENV{JSANLIB} || ($^O eq 'MSWin32') ? 'c:\JSAN' : (split /\s+/, $Config{'libspath'})[1] . '/jsan';
+	return $ENV{JSANLIB} || (($^O eq 'MSWin32') ? 'c:\JSAN' : (split /\s+/, $Config{'libspath'})[1] . '/jsan');
 }
 
 
@@ -160,12 +160,30 @@ sub concatenate_for_task {
 	    my $bundle_fh = $bundle_file->openw(); 
 	    
 	    foreach my $comp (@components) {
-	        print $bundle_fh $self->comp_to_filename($comp)->slurp . ";\n";
+	        print $bundle_fh $self->get_component_content($comp) . ";\n";
 	    }
 	    
 	    $bundle_fh->close();
     };
 }
+
+
+#================================================================================================================================================================================================================================================
+sub get_component_content {
+    my ($self, $component) = @_;
+    
+    if ($component =~ /^jsan:(.+)/) {
+        my @file = ($self->get_jsan_libroot, 'lib', split /\./, $1);
+        $file[ -1 ] .= '.js';
+        
+        return file(@file)->slurp;
+    } elsif ($component =~ /^=(.+)/) {
+        return file($1)->slurp;
+    } else {
+        return $self->comp_to_filename($component)->slurp;
+    } 
+}
+
 
 
 #================================================================================================================================================================================================================================================
