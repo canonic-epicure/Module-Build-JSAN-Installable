@@ -34,7 +34,6 @@ my $build = Module::Build::JSAN::Installable->current();
 
 $ENV{JSANLIB} = dir('jsan');
 
-
 my ($std, $err) = capture { system($^X, "-I$blib_dir", 'Build', 'task', '--task_name=all'); };
 
 #diag("STDOUT: [$std], STDERR: [$err]");
@@ -67,7 +66,7 @@ ok($odd_content =~ /1;\s+3;/s, '`Odd` bundle is correct');
 ok($even_plus_odd_content =~ /2;\s+4;\s+1;\s+3;/s, '`Odd` bundle is correct');
 ok($part23 =~ /jsan1;\s+part23;\s+jsan2;/s, '`Part23` bundle is correct');
 ok($part22 =~ /jsan1;\s+part23;\s+jsan2;\s+part22;/s, '`Part22` bundle is correct');
-ok($part21 =~ /jsan1;\s+part23;\s+jsan2;\s+part22;\s+part21;/s, '`Part21` bundle is correct');
+ok($part21 =~ /jsan1;\s+part23;\s+jsan2;\s+part22;\s+part21;\s+jsan4;/s, '`Part21` bundle is correct');
 
 
 

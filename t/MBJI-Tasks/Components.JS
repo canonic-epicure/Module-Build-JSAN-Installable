@@ -19,7 +19,8 @@ COMPONENTS = {
     
     "Part21" : [
     	"+Part22",
-    	"Part2.File1"
+    	"Part2.File1",
+    	"=jsan/lib/File4.js"
     ],
     
     "Part22" : [
