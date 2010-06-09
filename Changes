@@ -1,6 +1,12 @@
 Revision history for Module-Build-JSAN-Installable
 
 {{$NEXT}}
+
+		- 'docs' action no longer depends on 'manifest' (need to run it manually)
+		  this should allow to have the distributions w/o MANIFEST.SKIP file (which
+		  is otherwise created when building docs)
+
+0.10      2010-06-02 07:26
 		- change to Dist::Zilla as building tool
 
 0.09	01/24/2010

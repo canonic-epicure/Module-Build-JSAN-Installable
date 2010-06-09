@@ -204,8 +204,8 @@ sub ACTION_test {
 sub ACTION_dist {
     my $self = shift;
 
-    $self->depends_on('docs');
     $self->depends_on('manifest');
+    $self->depends_on('docs');
     $self->depends_on('distdir');
 
     my $dist_dir = $self->dist_dir;
@@ -224,8 +224,6 @@ sub ACTION_dist {
 #================================================================================================================================================================================================================================================
 sub ACTION_docs {
     my $self = shift;
-    
-    $self->depends_on('manifest');
     
     #preparing 'doc' directory possible adding to cleanup 
     my $doc_dir = catdir 'doc';
