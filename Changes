@@ -2,6 +2,8 @@ Revision history for Module-Build-JSAN-Installable
 
 {{$NEXT}}
 
+        - fixed a name of the environment variable in docs 
+
 0.12      2010-07-02 07:27
 
 		- allow '-' as separator in the distribution name 
