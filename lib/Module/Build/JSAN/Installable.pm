@@ -644,7 +644,7 @@ The path to the library is resolved in the following order:
 
 1. B<--install_base> command-line argument
 
-2. environment variable B<JSAN_LIB>
+2. environment variable B<JSANLIB>
 
 3. Either the first directory in C<$Config{libspath}>, followed with C</jsan> (probably C</usr/local/lib> on linux systems)
 or C<C:\JSAN> (on Windows)
